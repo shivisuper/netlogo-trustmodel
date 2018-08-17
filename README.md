@@ -1,2 +1,2 @@
-# netlogo-trustmodel
-A web implementation of Trust Model using NetLogo application
+# NetLogo Trust model backend
+Spring boot backend with wrapper APIs over NetLogo application
