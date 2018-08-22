@@ -9,5 +9,5 @@ public class FireNlogoModel {
     private final String density;
     private final String rand_seed;
     private final String reps;
-    public String burnt_trees;
+    private String burnt_trees;
 }
