@@ -1,10 +1,16 @@
+wrapper {
+    gradleVersion = '4.8'
+}
+
 buildscript {
     ext {
         springBootVersion = '2.0.4.RELEASE'
     }
+
     repositories {
         mavenCentral()
     }
+
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
@@ -16,18 +22,10 @@ apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
-bootJar {
-    baseName = 'gs-actuator-service'
-    version = '0.1.0'
-}
-
 group = 'com.netlogo.trustmodel'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
+targetCompatibility = 1.8
 
 sourceSets {
     main {
@@ -37,12 +35,28 @@ sourceSets {
     }
 }
 
+bootJar {
+    launchScript()
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://dl.bintray.com/netlogo/NetLogo-JVM'
+    }
+}
+
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    compile('org.springframework.boot:spring-boot-starter-web')
-    compile('org.springframework.boot:spring-boot-starter-actuator')
-    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
-    compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
-    compileOnly('org.projectlombok:lombok')
-    testCompile('org.springframework.boot:spring-boot-starter-test')
+    annotationProcessor 'org.projectlombok:lombok'
+
+    compile 'org.projectlombok:lombok'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+
+    compile 'io.springfox:springfox-swagger2:2.9.2'
+    compile 'io.springfox:springfox-swagger-ui:2.9.2'
+    compile 'org.nlogo:netlogo:6.0.4'
+    compile 'log4j:log4j:1.2.17' // Force version to remove Gradle build warning
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
