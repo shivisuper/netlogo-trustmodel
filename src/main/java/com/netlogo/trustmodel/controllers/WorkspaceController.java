@@ -1,63 +1,96 @@
 package com.netlogo.trustmodel.controllers;
 
-import com.netlogo.trustmodel.services.WorkspaceService;
+import com.netlogo.trustmodel.domain.HeadlessWorkspaceWrapper;
+import com.netlogo.trustmodel.domain.HeadlessWorkspaceWrapperFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/workspace")
 @RequiredArgsConstructor
 public class WorkspaceController {
     @NonNull
-    private final WorkspaceService workspaceService;
+    private final HeadlessWorkspaceWrapperFactory headlessWorkspaceWrapperFactory;
 
-    @PostMapping("/load-model")
-    public ResponseEntity<?> loadModel(@RequestParam final String filename) throws IOException {
-        workspaceService.loadModel(filename);
+    private HeadlessWorkspaceWrapper workspace;
+
+    @GetMapping("/ready")
+    public ResponseEntity<?> ready() {
+        return ResponseEntity.ok(workspace.isReady());
+    }
+
+    @GetMapping("/reports")
+    public ResponseEntity<?> reports() {
+        Assert.isTrue(workspace.isReady(), "workspace is not ready");
+
+        return ResponseEntity.ok(workspace.getReports());
+    }
+
+    @GetMapping(value = "/stream-model", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<?> streamModel() {
+        return Flux.generate(sink -> {
+            workspace.go();
+            sink.next(workspace.getReports());
+        }).buffer(1);
+    }
+
+    @PostMapping("/setup")
+    public ResponseEntity<?> setup() {
+        Assert.isTrue(workspace.isReady(), "workspace is not ready");
+
+        workspace.setup();
 
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/is-model-loaded")
-    public ResponseEntity<?> isModelLoaded() {
-        return ResponseEntity.ok(workspaceService.isModelLoaded());
+    @PostMapping("/go")
+    public ResponseEntity<?> go() {
+        Assert.isTrue(workspace.isReady(), "workspace is not ready");
+
+        workspace.go();
+
+        return ResponseEntity.ok(workspace.getReports());
     }
 
-    @PostMapping(value = "/command", params = "source")
-    public ResponseEntity<?> command(@RequestParam final String source) {
-        Assert.isTrue(workspaceService.isModelLoaded(), "model must be loaded");
+    @PostMapping("/commands")
+    public ResponseEntity<?> commands(@RequestBody final List<String> sources) {
+        Assert.isTrue(workspace.isReady(), "workspace is not ready");
 
-        workspaceService.command(source);
+        workspace.commands(sources);
 
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/command")
-    public ResponseEntity<?> command(@RequestBody final List<String> sources) {
-        Assert.isTrue(workspaceService.isModelLoaded(), "model must be loaded");
+    @PostMapping("/register-reports")
+    public ResponseEntity<?> registerReports(@RequestBody final Map<String, String> reportMap) {
+        Assert.isTrue(workspace.isReady(), "workspace is not ready");
 
-        workspaceService.command(sources);
+        workspace.registerReports(reportMap);
 
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "/report", params = "source")
-    public ResponseEntity<?> report(@RequestParam final String source) {
-        Assert.isTrue(workspaceService.isModelLoaded(), "model must be loaded");
+    @PostMapping("/clear-registered-reports")
+    public ResponseEntity<?> clearRegisteredReports() {
+        Assert.isTrue(workspace.isReady(), "workspace is not ready");
 
-        return ResponseEntity.ok(workspaceService.report(source));
+        workspace.clearRegisteredReports();
+
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/report")
-    public ResponseEntity<?> report(@RequestBody final List<String> sources) {
-        Assert.isTrue(workspaceService.isModelLoaded(), "model must be loaded");
-
-        return ResponseEntity.ok(workspaceService.report(sources));
+    @PostConstruct
+    private void init() throws IOException {
+        workspace = headlessWorkspaceWrapperFactory.create();
     }
 }
