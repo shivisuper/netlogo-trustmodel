@@ -51,10 +51,9 @@ dependencies {
 
     compile 'org.projectlombok:lombok'
     compile 'org.springframework.boot:spring-boot-starter-actuator'
-    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile 'org.springframework.boot:spring-boot-starter-webflux'
 
-    compile 'io.springfox:springfox-swagger2:2.9.2'
-    compile 'io.springfox:springfox-swagger-ui:2.9.2'
     compile 'org.nlogo:netlogo:6.0.4'
     compile 'log4j:log4j:1.2.17' // Force version to remove Gradle build warning
 
