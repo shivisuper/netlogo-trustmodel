@@ -44,11 +44,16 @@ public class WorkspaceController {
         }).buffer(1);
     }
 
+    // This will run the setup command and also register the reporters we want to monitor
     @PostMapping("/setup")
-    public ResponseEntity<?> setup() {
+    public ResponseEntity<?> setup(@RequestBody final Map<String, String> reportMap) {
         Assert.isTrue(workspace.isReady(), "workspace is not ready");
 
+        workspace.clearRegisteredReports();
+
         workspace.setup();
+
+        workspace.registerReports(reportMap);
 
         return ResponseEntity.ok().build();
     }
