@@ -76,24 +76,6 @@ public class WorkspaceController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/register-reports")
-    public ResponseEntity<?> registerReports(@RequestBody final Map<String, String> reportMap) {
-        Assert.isTrue(workspace.isReady(), "workspace is not ready");
-
-        workspace.registerReports(reportMap);
-
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/clear-registered-reports")
-    public ResponseEntity<?> clearRegisteredReports() {
-        Assert.isTrue(workspace.isReady(), "workspace is not ready");
-
-        workspace.clearRegisteredReports();
-
-        return ResponseEntity.ok().build();
-    }
-
     @PostConstruct
     private void init() throws IOException {
         workspace = headlessWorkspaceWrapperFactory.create();
