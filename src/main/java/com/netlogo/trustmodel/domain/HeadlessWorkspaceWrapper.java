@@ -3,6 +3,7 @@ package com.netlogo.trustmodel.domain;
 
 import lombok.NonNull;
 import org.nlogo.headless.HeadlessWorkspace;
+import org.nlogo.nvm.RuntimePrimitiveException;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
@@ -39,7 +40,9 @@ public class HeadlessWorkspaceWrapper {
         workspace.command("go");
     }
 
-    public synchronized Map<String, Object> getReports() {
+    //TODO: will have to handle RuntimePrimitveException type that nlogo throws randomly
+    //TODO: whenever some randomly generated reporters are empty
+    public synchronized Map<String, Object> getReports() throws RuntimePrimitiveException {
         Assert.isTrue(isReady(), "workspace is not ready");
 
         return registeredReportMap.entrySet().stream()
