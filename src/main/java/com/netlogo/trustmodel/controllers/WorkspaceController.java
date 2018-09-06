@@ -115,7 +115,6 @@ public class WorkspaceController {
 
 
         workspace.registerReports(reportMapLabels);
->>>>>>> Stashed changes
 
         return ResponseEntity.ok(workspace.getReports());
     }
