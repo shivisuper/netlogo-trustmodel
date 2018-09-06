@@ -48,7 +48,7 @@ public class WorkspaceController {
     // This will run the setup command and also register the reporters we want to monitor
     @PostMapping("/setup")
     public ResponseEntity<?> setup() {
-        Map<String, String> reportMapLabels = new HashMap<>();
+        Map<String, String> reportMap = new HashMap<>();
 
         Assert.isTrue(workspace.isReady(), "workspace is not ready");
         workspace.clearRegisteredReports();
@@ -58,45 +58,65 @@ public class WorkspaceController {
         //TODO: set the seed values using a global constant instead
         //right now this is quite ugly. Maybe we can add this stuff to the properties file
 
-        reportMapLabels.put("clientsGreater5Yrs", "count clients with [ xcor > 250 ]");
-        reportMapLabels.put("injurySeverity","mean [ InjurySeverity ] of clients");
-        reportMapLabels.put("atFaultStatus","mean [ AtFaultStatus ] of clients");
-        reportMapLabels.put("healthStatus", "mean [ HealthStatus ] of clients");
-        reportMapLabels.put("previousInjury","mean [ PreviousInjury ] of clients");
-        reportMapLabels.put("embeddedness","mean [ Embeddedness ] of clients");
-        reportMapLabels.put("employmentStatus", "mean [ EmploymentStatus ] of clients");
-        reportMapLabels.put("vulnerableStatus", "mean [ VulnerableStatus ] of clients");
-        reportMapLabels.put("gender", "mean [ Gender ] of clients");
-        reportMapLabels.put("age", "mean [ Age ] of clients");
-        reportMapLabels.put("claimDuration", "mean [ ClaimDuration ] of clients");
-        reportMapLabels.put("injuryClassification", "mean [ InjuryClassification ] of clients");
-        reportMapLabels.put("education", "mean [ Education ] of clients");
-        reportMapLabels.put("drift", "mean [ Drift ] of clients");
-        reportMapLabels.put("waitListEffect","mean [ Waitlisteffect ] of clients");
-        reportMapLabels.put("driftWaitListEffect","mean [ Drift - Waitlisteffect ] of clients");
-        reportMapLabels.put("currentDrift","CurrentDrift");
-        reportMapLabels.put("time","time");
-        reportMapLabels.put("recalculateDrift","RecalculateDrift");
-        reportMapLabels.put("costs","costs");
 
-        reportMapLabels.put("meanRecoveryStatus","mean [ ycor ] of clients + 100");
-        reportMapLabels.put("totalClients","TotalClients");
-        reportMapLabels.put("exit","TotalClients - count clients");
-        reportMapLabels.put("goodExit6Months", "GoodExit6Months");
-        reportMapLabels.put("goodExit18Months", "GoodExit18Months");
-        reportMapLabels.put("goodExit24Months", "GoodExit24Months");
-        reportMapLabels.put("goodExit36Months", "GoodExit36Months");
-        reportMapLabels.put("neutralExit36PlusMonths","NeutralExit36PlusMonths");
-        reportMapLabels.put("bottom6Mo", "BadExit6Months");
-        reportMapLabels.put("bottom18Mo", "BadExit18Months");
-        reportMapLabels.put("bottom24Mo", "BadExit24Months");
-        reportMapLabels.put("bottom36Mo", "BadExit36Months");
-        reportMapLabels.put("bottom36+Mo","BadExit36PlusMonths");
+        // All labels initial setup values
+        reportMap.put("clientsGreater5Yrs_Label", "count clients with [ xcor > 250 ]");
+        reportMap.put("injurySeverity_Label","mean [ InjurySeverity ] of clients");
+        reportMap.put("atFaultStatus_Label","mean [ AtFaultStatus ] of clients");
+        reportMap.put("healthStatus_Label", "mean [ HealthStatus ] of clients");
+        reportMap.put("previousInjury_Label","mean [ PreviousInjury ] of clients");
+        reportMap.put("embeddedness_Label","mean [ Embeddedness ] of clients");
+        reportMap.put("employmentStatus_Label", "mean [ EmploymentStatus ] of clients");
+        reportMap.put("vulnerableStatus_Label", "mean [ VulnerableStatus ] of clients");
+        reportMap.put("gender_Label", "mean [ Gender ] of clients");
+        reportMap.put("age_Label", "mean [ Age ] of clients");
+        reportMap.put("claimDuration_Label", "mean [ ClaimDuration ] of clients");
+        reportMap.put("injuryClassification_Label", "mean [ InjuryClassification ] of clients");
+        reportMap.put("education_Label", "mean [ Education ] of clients");
+        reportMap.put("drift_Label", "mean [ Drift ] of clients");
+        reportMap.put("waitListEffect_Label","mean [ Waitlisteffect ] of clients");
+        reportMap.put("driftWaitListEffect_Label","mean [ Drift - Waitlisteffect ] of clients");
+        reportMap.put("currentDrift_Label","CurrentDrift");
+        reportMap.put("time_Label","time");
+        reportMap.put("recalculateDrift_Label","RecalculateDrift");
+        reportMap.put("costs_Label","costs");
+
+        reportMap.put("meanRecoveryStatus_Label","mean [ ycor ] of clients + 100");
+        reportMap.put("totalClients_Label","TotalClients");
+        reportMap.put("exit_Label","TotalClients - count clients");
+        reportMap.put("goodExit6Months_Label", "GoodExit6Months");
+        reportMap.put("goodExit18Months_Label", "GoodExit18Months");
+        reportMap.put("goodExit24Months_Label", "GoodExit24Months");
+        reportMap.put("goodExit36Months_Label", "GoodExit36Months");
+        reportMap.put("neutralExit36PlusMonths_Label","NeutralExit36PlusMonths");
+        reportMap.put("bottom6Mo_Label", "BadExit6Months");
+        reportMap.put("bottom18Mo_Label", "BadExit18Months");
+        reportMap.put("bottom24Mo_Label", "BadExit24Months");
+        reportMap.put("bottom36Mo_Label", "BadExit36Months");
+        reportMap.put("bottom36+Mo_Label","BadExit36PlusMonths");
 
 
-        reportMapLabels.put("Solicitors","Solicitors");
-        reportMapLabels.put("NewClients","NewClients");
-        reportMapLabels.put("RandomVariation","RandomVariation");
+        //All Sliders initial setup values
+
+        reportMap.put("newClients_Slider","NewClients");
+        reportMap.put("roadSafetyEffectiveness_Slider","Road_Safety_Effectiveness");
+        reportMap.put("injuryRecovery_Slider","InjuryRecovery");
+        reportMap.put("randomVariation_Slider","RandomVariation");
+        reportMap.put("recalculateDrift_Slider","RecalculateDrift");
+        reportMap.put("shockZone1Starts_Slider","ShockZone1Starts");
+        reportMap.put("shockZone1Ends_Slider","ShockZone1Ends");
+        reportMap.put("shockZone2Starts_Slider","ShockZone2Starts");
+        reportMap.put("shockZone2Ends_Slider","ShockZone2Ends");
+        reportMap.put("reliefZone1Starts_Slider","ReliefZone1Starts");
+        reportMap.put("reliefZone1Ends_Slider","ReliefZone1Ends");
+        reportMap.put("reliefZone2Starts_Slider","ReliefZone2Starts");
+        reportMap.put("reliefZone2Ends_Slider","ReliefZone2Ends");
+        reportMap.put("shockZone1Increase_Slider","ShockZone1Increase");
+        reportMap.put("shockZone2Increase_Slider","ShockZone2Increase");
+        reportMap.put("reliefZone1Decrease_Slider","ReliefZone1Decrease");
+        reportMap.put("reliefZone2Decrease_Slider","ReliefZone2Decrease");
+        reportMap.put("driftModifier_Slider","DriftModifier");
+        reportMap.put("solicitors_Slider","Solicitors");
 
 
 //        reportMap.put("schemeType","scheme-type");
@@ -115,7 +135,7 @@ public class WorkspaceController {
 //                "(TotalClients - count clients)");
 
 
-        workspace.registerReports(reportMapLabels);
+        workspace.registerReports(reportMap);
 
         return ResponseEntity.ok(workspace.getReports());
     }
