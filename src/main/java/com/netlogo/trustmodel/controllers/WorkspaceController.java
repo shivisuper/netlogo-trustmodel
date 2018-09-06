@@ -48,7 +48,7 @@ public class WorkspaceController {
     // This will run the setup command and also register the reporters we want to monitor
     @PostMapping("/setup")
     public ResponseEntity<?> setup() {
-        Map<String, String> reportMap = new HashMap<>();
+        Map<String, String> reportMapLabels = new HashMap<>();
 
         Assert.isTrue(workspace.isReady(), "workspace is not ready");
         workspace.clearRegisteredReports();
@@ -56,34 +56,65 @@ public class WorkspaceController {
 
         //TODO: set the seed values using a global constant instead
         //right now this is quite ugly. Maybe we can add this stuff to the properties file
-        reportMap.put("waitlisteffect","Waitlisteffect");
-        reportMap.put("totalClients","TotalClients");
-        reportMap.put("schemeType","scheme-type");
-        reportMap.put("costs","costs");
-        reportMap.put("shockZoneSD","ShockZoneSD");
-        reportMap.put("currentDrift","CurrentDrift");
-        reportMap.put("commonLawCapture", "CommonLawCapture");
-        reportMap.put("downwardDriftModifier", "DownwardDriftModifier");
-        reportMap.put("upwardDriftModifier", "UpwardDriftModifier");
-        reportMap.put("employmentStatus", "mean [ EmploymentStatus ] of clients");
-        reportMap.put("vulnerableStatus", "mean [ VulnerableStatus ] of clients");
-        reportMap.put("age", "mean [ Age ] of clients");
-        reportMap.put("education", "mean [ Education ] of clients");
-        reportMap.put("gender", "mean [ Gender ] of clients");
-        reportMap.put("injurySeverity", "mean [ InjurySeverity ] of clients");
-        reportMap.put("claimDuration", "mean [ ClaimDuration ] of clients");
-        reportMap.put("goodExit6Months", "GoodExit6Months");
-        reportMap.put("goodExit18Months", "GoodExit18Months");
-        reportMap.put("goodExit24Months", "GoodExit24Months");
-        reportMap.put("goodExit36Months", "GoodExit36Months");
-        reportMap.put("badExit6Months", "BadExit6Months");
-        reportMap.put("badExit18Months", "BadExit18Months");
-        reportMap.put("badExit24Months", "BadExit24Months");
-        reportMap.put("badExit36Months", "BadExit36Months");
-        reportMap.put("healthStatus", "mean [ HealthStatus ] of clients");
-        reportMap.put("injuryClassification", "mean [ InjuryClassification ] of clients");
-        reportMap.put("drift", "mean [ Drift ] of clients");
-        workspace.registerReports(reportMap);
+
+        reportMapLabels.put("clientsGreater5Yrs", "count clients with [ xcor > 250 ]");
+        reportMapLabels.put("injurySeverity","mean [ InjurySeverity ] of clients");
+        reportMapLabels.put("atFaultStatus","mean [ AtFaultStatus ] of clients");
+        reportMapLabels.put("healthStatus", "mean [ HealthStatus ] of clients");
+        reportMapLabels.put("previousInjury","mean [ PreviousInjury ] of clients");
+        reportMapLabels.put("embeddedness","mean [ Embeddedness ] of clients");
+        reportMapLabels.put("employmentStatus", "mean [ EmploymentStatus ] of clients");
+        reportMapLabels.put("vulnerableStatus", "mean [ VulnerableStatus ] of clients");
+        reportMapLabels.put("gender", "mean [ Gender ] of clients");
+        reportMapLabels.put("age", "mean [ Age ] of clients");
+        reportMapLabels.put("claimDuration", "mean [ ClaimDuration ] of clients");
+        reportMapLabels.put("injuryClassification", "mean [ InjuryClassification ] of clients");
+        reportMapLabels.put("education", "mean [ Education ] of clients");
+        reportMapLabels.put("drift", "mean [ Drift ] of clients");
+        reportMapLabels.put("waitListEffect","mean [ Waitlisteffect ] of clients");
+        reportMapLabels.put("driftWaitListEffect","mean [ Drift - Waitlisteffect ] of clients");
+        reportMapLabels.put("currentDrift","CurrentDrift");
+        reportMapLabels.put("time","time");
+        reportMapLabels.put("recalculateDrift","RecalculateDrift");
+        reportMapLabels.put("costs","costs");
+
+        reportMapLabels.put("meanRecoveryStatus","mean [ ycor ] of clients + 100");
+        reportMapLabels.put("totalClients","TotalClients");
+        reportMapLabels.put("exit","TotalClients - count clients");
+        reportMapLabels.put("goodExit6Months", "GoodExit6Months");
+        reportMapLabels.put("goodExit18Months", "GoodExit18Months");
+        reportMapLabels.put("goodExit24Months", "GoodExit24Months");
+        reportMapLabels.put("goodExit36Months", "GoodExit36Months");
+        reportMapLabels.put("neutralExit36PlusMonths","NeutralExit36PlusMonths");
+        reportMapLabels.put("bottom6Mo", "BadExit6Months");
+        reportMapLabels.put("bottom18Mo", "BadExit18Months");
+        reportMapLabels.put("bottom24Mo", "BadExit24Months");
+        reportMapLabels.put("bottom36Mo", "BadExit36Months");
+        reportMapLabels.put("bottom36+Mo","BadExit36PlusMonths");
+
+        reportMapLabels.put("Solicitors","Solicitors");
+        reportMapLabels.put("NewClients","NewClients");
+        reportMapLabels.put("RandomVariation","RandomVariation");
+
+
+
+//        reportMap.put("schemeType","scheme-type");
+//        reportMap.put("shockZoneSD","ShockZoneSD");
+//        reportMap.put("commonLawCapture", "CommonLawCapture");
+//        reportMap.put("downwardDriftModifier", "DownwardDriftModifier");
+//        reportMap.put("upwardDriftModifier", "UpwardDriftModifier");
+//        reportMapLabels.put("percentgoodExit","100 * ( GoodExit6Months + GoodExit18Months + GoodExit24Months + GoodExit36Months ) / \n" +
+//                "( TotalClients - count clients )");
+//
+//        reportMapLabels.put("%badExit","100 * count clients with [RockBottom = 1] \n" +
+//                "/ \n" +
+//                "(TotalClients - count clients)");
+//        reportMapLabels.put("commonLaw#","CommonLaw#");
+//        reportMapLabels.put("commonLaw%","100 * CommonLawCapture /\n" +
+//                "(TotalClients - count clients)");
+
+
+        workspace.registerReports(reportMapLabels);
 
         return ResponseEntity.ok(workspace.getReports());
     }
