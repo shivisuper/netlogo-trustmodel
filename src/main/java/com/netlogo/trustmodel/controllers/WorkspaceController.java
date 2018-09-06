@@ -57,6 +57,7 @@ public class WorkspaceController {
 
         //TODO: set the seed values using a global constant instead
         //right now this is quite ugly. Maybe we can add this stuff to the properties file
+
         reportMapLabels.put("clientsGreater5Yrs", "count clients with [ xcor > 250 ]");
         reportMapLabels.put("injurySeverity","mean [ InjurySeverity ] of clients");
         reportMapLabels.put("atFaultStatus","mean [ AtFaultStatus ] of clients");
@@ -91,6 +92,11 @@ public class WorkspaceController {
         reportMapLabels.put("bottom24Mo", "BadExit24Months");
         reportMapLabels.put("bottom36Mo", "BadExit36Months");
         reportMapLabels.put("bottom36+Mo","BadExit36PlusMonths");
+
+
+        reportMapLabels.put("Solicitors","Solicitors");
+        reportMapLabels.put("NewClients","NewClients");
+        reportMapLabels.put("RandomVariation","RandomVariation");
 
 
 //        reportMap.put("schemeType","scheme-type");
