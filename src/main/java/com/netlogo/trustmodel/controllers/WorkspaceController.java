@@ -118,6 +118,10 @@ public class WorkspaceController {
         reportMap.put("driftModifier_Slider","DriftModifier");
         reportMap.put("solicitors_Slider","Solicitors");
 
+        reportMap.put("healthStatus","mean [ HealthStatus ] of clients * 10 ");
+
+//        reportMap.put("tick","reset-ticks");
+//        reportMap.put("days","days");
 
 //        reportMap.put("schemeType","scheme-type");
 //        reportMap.put("shockZoneSD","ShockZoneSD");
@@ -136,6 +140,7 @@ public class WorkspaceController {
 
 
         workspace.registerReports(reportMap);
+
 
         return ResponseEntity.ok(workspace.getReports());
     }
@@ -158,7 +163,14 @@ public class WorkspaceController {
 
         return ResponseEntity.ok().build();
     }
+    @PostMapping("/wave")
+    public ResponseEntity<?> wave() {
+        Assert.isTrue(workspace.isReady(), "workspace is not ready");
 
+        workspace.wave();
+
+        return ResponseEntity.ok(workspace.getReports());
+    }
     @PostConstruct
     private void init() throws IOException {
         workspace = headlessWorkspaceWrapperFactory.create();

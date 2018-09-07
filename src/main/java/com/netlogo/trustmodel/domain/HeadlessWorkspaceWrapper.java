@@ -22,24 +22,24 @@ public class HeadlessWorkspaceWrapper {
 
     public HeadlessWorkspaceWrapper(@NonNull final HeadlessWorkspace workspace) {
         Assert.isTrue(workspace.modelOpened(), "workspace model must be opened");
-
         this.workspace = workspace;
-
         setup();
     }
 
     public synchronized void setup() {
         Assert.isTrue(isReady(), "workspace is not ready");
-
         workspace.command("setup");
     }
 
     public synchronized void go() {
         Assert.isTrue(isReady(), "workspace is not ready");
-
         workspace.command("go");
     }
 
+    public synchronized void wave() {
+        Assert.isTrue(isReady(), "workspace is not ready");
+        workspace.command("wave");
+    }
     //TODO: will have to handle RuntimePrimitveException type that nlogo throws randomly
     //TODO: whenever some randomly generated reporters are empty
     public synchronized Map<String, Object> getReports() throws RuntimePrimitiveException {
@@ -74,21 +74,17 @@ public class HeadlessWorkspaceWrapper {
 
     public synchronized void registerReports(@NonNull final Map<String, String> reportMap) {
         Assert.isTrue(isReady(), "workspace is not ready");
-
         reportMap.forEach(this::registerReport);
     }
 
     public synchronized void clearRegisteredReports() {
         Assert.isTrue(isReady(), "workspace is not ready");
-
         registeredReportMap.clear();
     }
 
     public synchronized void dispose() throws InterruptedException {
         Assert.isTrue(isReady(), "workspace is not ready");
-
         disposed = true;
-
         workspace.dispose();
     }
 
