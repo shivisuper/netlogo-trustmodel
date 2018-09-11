@@ -39,19 +39,44 @@ public class HeadlessWorkspaceWrapper {
     public synchronized void wave() {
         Assert.isTrue(isReady(), "workspace is not ready");
         workspace.command("wave");
+
+        org.nlogo.api.Turtle turtle =(org.nlogo.api.Turtle)  workspace.world().turtles().getAgent(3.0);
+
+        System.out.println("name turtle is "+ turtle);
+        System.out.println("name turtle xcor is "+ turtle.xcor());
+        System.out.println("name turtle ycor is "+ turtle.ycor());
+        System.out.println("name turtle shape is "+ turtle.shape());
+        System.out.println("name turtle color is "+ turtle.color());
+
+//        org.nlogo.api.Turtle turtle =(org.nlogo.api.Turtle) workspace.world().turtles().getAgent(1);
+//        System.out.println("[xcor] of turtle 3 = " + turtle.xcor());
+//        workspace.dispose();
     }
     //TODO: will have to handle RuntimePrimitveException type that nlogo throws randomly
     //TODO: whenever some randomly generated reporters are empty
     public synchronized Map<String, Object> getReports() throws RuntimePrimitiveException {
-        Assert.isTrue(isReady(), "workspace is not ready");
+            Assert.isTrue(isReady(), "workspace is not ready");
 
-        return registeredReportMap.entrySet().stream()
-                .collect(Collectors.collectingAndThen(
-                        Collectors.toMap(Entry::getKey, e -> workspace.report(e.getValue())),
-                        Collections::unmodifiableMap
-                ));
+            return registeredReportMap.entrySet().stream()
+                    .collect(Collectors.collectingAndThen(
+                            Collectors.toMap(Entry::getKey,
+                                    e -> reportToWorkSpace(e.getValue())),
+                            Collections::unmodifiableMap
+                    ));
+
     }
 
+    // This method is to wrapping the Division by Zero exception from Workspace
+    private java.lang.Object reportToWorkSpace(String value){
+        java.lang.Object wrappingObject;
+        try {
+            wrappingObject=workspace.report(value);
+        }
+        catch (Exception ex)
+        { wrappingObject="N/A";}
+
+       return wrappingObject;
+    }
     public synchronized void command(@NonNull final String source) {
         Assert.isTrue(isReady(), "workspace is not ready");
 
