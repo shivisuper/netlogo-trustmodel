@@ -66,16 +66,16 @@ public class HeadlessWorkspaceWrapper {
 
     }
 
-    // This method is to wrapping the Division by Zero exception from Workspace
+    // This method is to Casting the Division by Zero exception from Workspace
     private java.lang.Object reportToWorkSpace(String value){
-        java.lang.Object wrappingObject;
+        java.lang.Object castingObject;
         try {
-            wrappingObject=workspace.report(value);
+            castingObject=workspace.report(value);
         }
         catch (Exception ex)
-        { wrappingObject="N/A";}
+        { castingObject="N/A";}
 
-       return wrappingObject;
+       return castingObject;
     }
     public synchronized void command(@NonNull final String source) {
         Assert.isTrue(isReady(), "workspace is not ready");
