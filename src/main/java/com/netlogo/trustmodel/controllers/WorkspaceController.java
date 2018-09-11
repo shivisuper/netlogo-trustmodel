@@ -362,12 +362,9 @@ public class WorkspaceController {
 //    }
 
     @PostMapping("/command")
-    public ResponseEntity<?> command(@RequestParam("source") String source) {
+    public ResponseEntity<?> commands(@RequestBody final String source) {
         Assert.isTrue(workspace.isReady(), "workspace is not ready");
-
-        // Check the source
-        System.out.println("command source is: " + source);
-//        workspace.command(source);
+        workspace.command(source);
 
         return ResponseEntity.ok().build();
     }
