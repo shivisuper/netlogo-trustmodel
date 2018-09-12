@@ -6,6 +6,7 @@ import lombok.val;
 import org.nlogo.agent.Turtle;
 import org.nlogo.api.Agent;
 import org.nlogo.api.AgentException;
+import org.nlogo.api.Color;
 import org.nlogo.headless.HeadlessWorkspace;
 import org.nlogo.nvm.RuntimePrimitiveException;
 import org.springframework.util.Assert;
@@ -17,6 +18,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class HeadlessWorkspaceWrapper {
+    private static final String BREED_KEY = "BREED";
+
+    private static final String COLOR_KEY = "COLOR";
+
     private final HeadlessWorkspace workspace;
 
     private final Map<String, String> registeredReportMap = Collections.synchronizedMap(new HashMap<>());
@@ -84,13 +89,17 @@ public class HeadlessWorkspaceWrapper {
 
             val variablesMap = IntStream.range(0, turtleVariables.size()).boxed()
                     .collect(Collectors.toMap(
-                            turtleVariables::get,
+                            i -> turtleVariables.get(i).toUpperCase(),
                             i -> Objects.toString(turtle.getTurtleVariable(i), "")
                     ));
 
             // Overwrite BREED variable since its toString() function isn't helpful
             val breedName = turtle.getBreed().printName();
-            variablesMap.put("BREED", breedName);
+            variablesMap.put(BREED_KEY, breedName);
+
+            // Overwrite COLOR variable with it's HEX equivalent
+            val color = Color.getColor(turtle.color());
+            variablesMap.put(COLOR_KEY, String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
 
             val breedVariables = JavaConverters.seqAsJavaList(JavaConverters.mapAsJavaMap(program.breeds()).get(breedName).owns());
 
