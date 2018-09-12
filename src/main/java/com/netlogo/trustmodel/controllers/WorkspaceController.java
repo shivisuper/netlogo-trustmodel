@@ -386,6 +386,13 @@ public class WorkspaceController {
         return ResponseEntity.ok(workspace.turtles());
     }
 
+    @GetMapping("/patches")
+    public ResponseEntity<?> patches() throws AgentException {
+        Assert.isTrue(workspace.isReady(), "workspace is not ready");
+
+        return ResponseEntity.ok(workspace.patches());
+    }
+
     @PostConstruct
     private void init() throws IOException {
         workspace = headlessWorkspaceWrapperFactory.create();

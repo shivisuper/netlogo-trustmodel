@@ -3,6 +3,7 @@ package com.netlogo.trustmodel.domain;
 
 import lombok.NonNull;
 import lombok.val;
+import org.nlogo.agent.Patch;
 import org.nlogo.agent.Turtle;
 import org.nlogo.api.Agent;
 import org.nlogo.api.AgentException;
@@ -101,6 +102,35 @@ public class HeadlessWorkspaceWrapper {
         }
 
         return turtleMap;
+    }
+
+    public synchronized Map<Long, Map<String, String>> patches() throws AgentException {
+        Assert.isTrue(isReady(), "workspace is not ready");
+
+        val world = workspace.world();
+        val program = world.program();
+
+        val patchVariables = JavaConverters.seqAsJavaList(program.patchesOwn());
+
+        val patchMap = new HashMap<Long, Map<String, String>>();
+        for (final Agent agent : world.patches().agents()) {
+            val patch = (Patch) agent;
+
+            val variablesMap = IntStream.range(0, patchVariables.size()).boxed()
+                    .collect(Collectors.toMap(
+                            i -> patchVariables.get(i).toUpperCase(),
+                            i -> Objects.toString(patch.getPatchVariable(i), "")
+                    ));
+
+            // Overwrite COLOR variable with it's HEX equivalent
+            val color = Color.getColor(patch.pcolor());
+            variablesMap.put(COLOR_KEY, String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
+
+
+            patchMap.put(patch.id(), variablesMap);
+        }
+
+        return patchMap;
     }
 
     public synchronized void command(@NonNull final String source) {
