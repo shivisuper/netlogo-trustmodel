@@ -4,6 +4,7 @@ import com.netlogo.trustmodel.domain.HeadlessWorkspaceWrapper;
 import com.netlogo.trustmodel.domain.HeadlessWorkspaceWrapperFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.nlogo.api.AgentException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -376,6 +377,13 @@ public class WorkspaceController {
         workspace.wave();
 
         return ResponseEntity.ok(workspace.getReports());
+    }
+
+    @GetMapping("/turtles")
+    public ResponseEntity<?> turtles() throws AgentException {
+        Assert.isTrue(workspace.isReady(), "workspace is not ready");
+
+        return ResponseEntity.ok(workspace.turtles());
     }
 
     @PostConstruct
