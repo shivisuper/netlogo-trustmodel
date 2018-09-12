@@ -281,9 +281,9 @@ public class WorkspaceController {
         reportMap.put("bottom24Mo_Label", bottom24Mo);
         reportMap.put("bottom36Mo_Label", bottom36Mo);
         reportMap.put("bottom36PlusMo_Label", bottom36PlusMo);
-        reportMap.put("commonLaw#_Label", commonLawNum);
+        reportMap.put("commonLawNum_Label", commonLawNum);
         reportMap.put("countClient_Label", countClient);
-        reportMap.put("commonLaw%_Label", commonLawPercent);
+        reportMap.put("commonLawPercent_Label", commonLawPercent);
         reportMap.put("percentGoodExit_Label", percentGoodExit);
         reportMap.put("percentBadExit_Label", percentBadExit);
 
