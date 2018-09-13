@@ -31,17 +31,34 @@ public class WorkspaceController {
     @Value("${plot-clientHealthStatus}")
     private String clientHealthStatus;
 
-    @Value("${plot-personalModerator}")
-    private String personalModerator;
+    @Value("plot-personalModerator_HealthStatus")
+    private String personalModerator_HealthStatus;
 
-    @Value("${plot-personalModeratorAtFalseStatus}")
-    private String personalModeratorAtFalseStatus;
+    @Value("${plot-personalModerator_AtFalseStatus}")
+    private String personalModerator_AtFalseStatus;
 
-    @Value("${plot-clientStatusChart}")
-    private String clientStatusChart;
+    @Value("${plot-clientStatusChart_Health}")
+    private String clientStatusChart_Health;
 
-    @Value("${plot-clientStatusChart3PlusYears}")
-    private String clientStatusChart3PlusYears;
+    @Value("${plot-clientStatusChart_5Years}")
+    private String clientStatusChart_5Years;
+
+
+    @Value("${plot-clientStatusChart_6Months}")
+    private String clientStatusChart_6Months;
+
+    @Value("${plot-clientStatusChart_3PlusYears}")
+    private String clientStatusChart_3PlusYears;
+
+    @Value("${plot-upperLowerLimitsOfClientHealth_Healthy}")
+    private String upperLowerLimitsOfClientHealth_Healthy;
+
+    @Value("${plot-upperLowerLimitsOfClientHealth_pen1}")
+    private String upperLowerLimitsOfClientHealth_pen1;
+
+    @Value("${plot-costPerClient}")
+    private String costPerClient;
+
 
     // Sliders
     @Value("${slider-newClients}")
@@ -312,10 +329,16 @@ public class WorkspaceController {
 
         //All Plots initial setup values
         reportMap.put("clientHealthStatus_Plot", clientHealthStatus);
-        reportMap.put("personalModerator_Plot", personalModerator);
-        reportMap.put("personalModeratorAtFalseStatus_Plot", personalModeratorAtFalseStatus);
-        reportMap.put("clientStatusChart_Plot", clientStatusChart);
-        reportMap.put("clientStatusChart3PlusYears_Plot", clientStatusChart3PlusYears);
+        reportMap.put("personalModerator_HealthStatus_Plot", personalModerator_HealthStatus);
+        reportMap.put("personalModerator_AtFalseStatus_Plot", personalModerator_AtFalseStatus);
+        reportMap.put("clientStatusChart_Health_Plot", clientStatusChart_Health);
+        reportMap.put("clientStatusChart_5Years_Plot", clientStatusChart_5Years);
+        reportMap.put("clientStatusChart_6Months_Plot", clientStatusChart_6Months);
+        reportMap.put("clientStatusChart_3PlusYears_Plot", clientStatusChart_3PlusYears);
+        reportMap.put("upperLowerLimitsOfClientHealth_Healthy_Plot", upperLowerLimitsOfClientHealth_Healthy);
+        reportMap.put("upperLowerLimitsOfClientHealth_pen1_Plot", upperLowerLimitsOfClientHealth_pen1);
+        reportMap.put("costPerClient_Plot", costPerClient);
+
 
 //        reportMap.put("ShockZone2Starts","ShockZone2Starts");
 //        reportMap.put("ShockZone2Ends","ShockZone2Ends");
