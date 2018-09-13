@@ -9,32 +9,24 @@
             <h1>Demo!</h1>
             <button id="start-stream">Start Stream</button>
             <button id="end-stream">End Stream</button>
-            <div id="demo-variables-container">
 
-            </div>
-
+            <img id="demo-streaming-view"/>
         </th:block>
 
         <script>
             var streamModelSource;
-            var demoVariablesContainer = document.getElementById("demo-variables-container");
+            var demoDrawingImage = document.getElementById("demo-streaming-view");
 
             document.getElementById("start-stream").addEventListener("click", function () {
-                streamModelSource = new EventSource("http://localhost:8080/workspace/stream-model");
-                // return new Promise((resolve, reject) => {
-                //     resolve(afun(streamModelSource.onmessage));
-                // });
-                streamModelSource.onmessage = afun;
+                streamModelSource = new EventSource("http://localhost:8080/workspace/stream-view");
+                streamModelSource.onmessage = function (event) {
+                    demoDrawingImage.src = "data:image/png;base64, " + event.data;
+                };
             });
 
             document.getElementById("end-stream").addEventListener("click", function () {
                 streamModelSource.close();
             });
-            afun = function (event) {
-                setTimeout(function () {
-                    demoVariablesContainer.innerHTML = "id: " + event.id + ", data: " +event.data;
-                }, 1000);
-            }
         </script>
     </body>
 </html>

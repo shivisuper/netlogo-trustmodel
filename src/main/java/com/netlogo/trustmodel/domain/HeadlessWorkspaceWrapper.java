@@ -13,6 +13,10 @@ import org.nlogo.nvm.RuntimePrimitiveException;
 import org.springframework.util.Assert;
 import scala.collection.JavaConverters;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -43,6 +47,12 @@ public class HeadlessWorkspaceWrapper {
     public synchronized void go() {
         Assert.isTrue(isReady(), "workspace is not ready");
         workspace.command("go");
+    }
+
+    public synchronized String exportView() {
+        Assert.isTrue(isReady(), "workspace is not ready");
+
+        return encodeImageToBase64(workspace.exportView());
     }
 
     public synchronized void wave() {
@@ -171,6 +181,20 @@ public class HeadlessWorkspaceWrapper {
 
     public boolean isReady() {
         return !disposed && workspace.modelOpened();
+    }
+
+    private String encodeImageToBase64(@NonNull final BufferedImage image) {
+        String imageString = null;
+
+        try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            ImageIO.write(image, "png", outputStream);
+
+            imageString = Base64.getEncoder().encodeToString(outputStream.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return imageString;
     }
 
     // This method is to Casting the Division by Zero exception from Workspace
