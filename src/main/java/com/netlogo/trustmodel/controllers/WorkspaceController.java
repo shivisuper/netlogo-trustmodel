@@ -342,6 +342,15 @@ public class WorkspaceController {
         return ResponseEntity.ok(workspace.getReports());
     }
 
+    @PostMapping("/go-once")
+    public ResponseEntity<?> goOnce() {
+        Assert.isTrue(workspace.isReady(), "workspace is not ready");
+
+        workspace.go();
+
+        return ResponseEntity.ok(workspace.getReports());
+    }
+
     @PostMapping("/commands")
     public ResponseEntity<?> commands(@RequestBody final List<String> sources) {
         Assert.isTrue(workspace.isReady(), "workspace is not ready");
