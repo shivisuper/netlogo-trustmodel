@@ -2,6 +2,8 @@ package com.netlogo.trustmodel.domain;
 
 
 import lombok.NonNull;
+import lombok.Value;
+import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.nlogo.agent.Patch;
 import org.nlogo.agent.Turtle;
@@ -10,13 +12,20 @@ import org.nlogo.api.AgentException;
 import org.nlogo.api.Color;
 import org.nlogo.headless.HeadlessWorkspace;
 import org.nlogo.nvm.RuntimePrimitiveException;
+import org.nlogo.plot.PlotPen;
 import org.springframework.util.Assert;
 import scala.collection.JavaConverters;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class HeadlessWorkspaceWrapper {
     private static final String BREED_KEY = "BREED";
@@ -43,6 +52,12 @@ public class HeadlessWorkspaceWrapper {
     public synchronized void go() {
         Assert.isTrue(isReady(), "workspace is not ready");
         workspace.command("go");
+    }
+
+    public synchronized String exportView() {
+        Assert.isTrue(isReady(), "workspace is not ready");
+
+        return encodeImageToBase64(workspace.exportView());
     }
 
     public synchronized void wave() {
@@ -173,6 +188,30 @@ public class HeadlessWorkspaceWrapper {
         return !disposed && workspace.modelOpened();
     }
 
+    public synchronized List<Plot> plots() {
+        Assert.isTrue(isReady(), "workspace is not ready");
+
+        return Stream.of(workspace.plotManager().getPlotNames())
+                .map(pn -> workspace.plotManager().getPlot(pn))
+                .map(Plot::create)
+                .collect(Collectors.toList());
+    }
+
+    private String encodeImageToBase64(@NonNull final BufferedImage image) {
+        // Default to a 1x1 transparent GIF
+        String imageString = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+
+        try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            ImageIO.write(image, "png", outputStream);
+
+            imageString = "data:image/png;base64," + Base64.getEncoder().encodeToString(outputStream.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return imageString;
+    }
+
     // This method is to Casting the Division by Zero exception from Workspace
     private java.lang.Object reportToWorkSpace(String value) {
         java.lang.Object castingObject;
@@ -183,5 +222,107 @@ public class HeadlessWorkspaceWrapper {
         }
 
         return castingObject;
+    }
+
+    @Value
+    public static class Plot {
+        @NonNull
+        private String name;
+
+        private double xMin;
+
+        private double xMax;
+
+        private double yMin;
+
+        private double yMax;
+
+        private boolean autoPlotOn;
+
+        private boolean legendShown;
+
+        private List<Pen> pens;
+
+        public static Plot create(@NonNull org.nlogo.plot.Plot plot) {
+            return new Plot(
+                    plot.name(),
+                    plot.xMin(),
+                    plot.xMax(),
+                    plot.yMin(),
+                    plot.yMax(),
+                    plot.autoPlotOn(),
+                    plot.legendIsOpen(),
+                    StreamSupport.stream(JavaConverters.asJavaIterable(plot.pens()).spliterator(), true)
+                            .map(Pen::create)
+                            .collect(Collectors.toList())
+            );
+        }
+
+        @Value
+        public static class Pen {
+            @NonNull
+            private String name;
+
+            @NonNull
+            private PenMode mode;
+
+            @NonNull
+            private String color;
+
+            private boolean inLegend;
+
+            @NonNull
+            private List<Point> points;
+
+            public static Pen create(@NonNull PlotPen plotPen) {
+                return new Pen(
+                        plotPen.name(),
+                        PenMode.valueOf(plotPen.mode()),
+                        Utils.convertArgbColorToHexString(plotPen.color()),
+                        plotPen.inLegend(),
+                        StreamSupport.stream(JavaConverters.asJavaIterable(plotPen.points()).spliterator(), true)
+                                .map(plotPoint -> Point.of(plotPoint.x(), plotPoint.y()))
+                                .collect(Collectors.toList())
+                );
+            }
+
+            @Value(staticConstructor = "of")
+            public static class Point {
+                private double x;
+
+                private double y;
+            }
+
+            public enum PenMode {
+                LINE,
+                BAR,
+                POINT;
+
+                public static PenMode valueOf(final int mode) {
+                    if (mode == 0) {
+                        return LINE;
+                    } else if (mode == 1) {
+                        return BAR;
+                    } else if (mode == 2) {
+                        return POINT;
+                    } else {
+                        throw new IllegalArgumentException("unexpected mode: " + mode);
+                    }
+                }
+            }
+        }
+    }
+
+    @UtilityClass
+    private static class Utils {
+        public String convertNetLogoColorToHexString(final double netLogoColor) {
+            val color = Color.getColor(netLogoColor);
+
+            return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+        }
+
+        public String convertArgbColorToHexString(final int argbColor) {
+            return convertNetLogoColorToHexString(Color.argbToColor(argbColor));
+        }
     }
 }
