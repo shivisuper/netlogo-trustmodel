@@ -399,6 +399,13 @@ public class WorkspaceController {
         });
     }
 
+    @GetMapping("/plots")
+    public ResponseEntity<?> plots() {
+        Assert.isTrue(workspace.isReady(), "workspace is not ready");
+
+        return ResponseEntity.ok(workspace.plots());
+    }
+
 //    @PostMapping("/command/{source}")
 //    public ResponseEntity<?> commands(@PathVariable("source") String source) {
 //        Assert.isTrue(workspace.isReady(), "workspace is not ready");
