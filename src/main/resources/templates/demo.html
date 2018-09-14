@@ -20,7 +20,7 @@
             document.getElementById("start-stream").addEventListener("click", function () {
                 streamModelSource = new EventSource("http://localhost:8080/workspace/stream-view");
                 streamModelSource.onmessage = function (event) {
-                    demoDrawingImage.src = "data:image/png;base64, " + event.data;
+                    demoDrawingImage.src = event.data;
                 };
             });
 

@@ -198,12 +198,13 @@ public class HeadlessWorkspaceWrapper {
     }
 
     private String encodeImageToBase64(@NonNull final BufferedImage image) {
-        String imageString = null;
+        // Default to a 1x1 transparent GIF
+        String imageString = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
 
         try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             ImageIO.write(image, "png", outputStream);
 
-            imageString = Base64.getEncoder().encodeToString(outputStream.toByteArray());
+            imageString = "data:image/png;base64," + Base64.getEncoder().encodeToString(outputStream.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }
