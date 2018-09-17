@@ -7,25 +7,47 @@
     <body>
         <th:block>
             <h1>Demo!</h1>
+            <button id="register-reports">Register Reports</button>
             <button id="start-stream">Start Stream</button>
             <button id="end-stream">End Stream</button>
 
-            <img id="demo-streaming-view"/>
+            <div>
+                Tick Count: <span id="demo-tick-count"></span>
+            </div>
+
+            <img id="demo-view" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="/>
+
+            <div id="demo-reports"></div>
+
+            <div id="demo-plots"></div>
         </th:block>
 
         <script>
             var streamModelSource;
-            var demoDrawingImage = document.getElementById("demo-streaming-view");
+
+            var demoTickCount = document.getElementById("demo-tick-count");
+            var demoView = document.getElementById("demo-view");
+            var demoPlots = document.getElementById("demo-plots");
+            var demoReports = document.getElementById("demo-reports");
 
             document.getElementById("start-stream").addEventListener("click", function () {
-                streamModelSource = new EventSource("http://localhost:8080/workspace/stream-view");
+                streamModelSource = new EventSource("http://localhost:8080/workspace/stream-world");
                 streamModelSource.onmessage = function (event) {
-                    demoDrawingImage.src = event.data;
+                    var world = JSON.parse(event.data);
+
+                    demoTickCount.innerText = world.tickCount;
+                    demoView.src = world.view.imgSrc;
+                    demoReports.innerHTML = JSON.stringify(world.reports);
+                    demoPlots.innerHTML = JSON.stringify(world.plots);
                 };
             });
 
             document.getElementById("end-stream").addEventListener("click", function () {
                 streamModelSource.close();
+            });
+
+            document.getElementById("register-reports").addEventListener("click", function () {
+                fetch('http://localhost:8080/trust-model/register-reporters', {method: 'post'});
             });
         </script>
     </body>
