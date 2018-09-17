@@ -39,8 +39,6 @@ public class HeadlessWorkspaceWrapper {
     }
 
     public synchronized void setup() {
-        Assert.isTrue(isReady(), "workspace is not ready");
-
         executeCommand("setup");
 
         updateCurrentWorld();
@@ -60,17 +58,12 @@ public class HeadlessWorkspaceWrapper {
         executeCommand(source);
     }
 
-    public synchronized void commands(@NonNull final Collection<String> sources) {
-        Assert.isTrue(isReady(), "workspace is not ready");
-
-        sources.forEach(this::command);
-    }
-
     public World world() {
         Assert.isTrue(isReady(), "workspace is not ready");
 
         return currentWorld;
     }
+
 
     public synchronized void registerReporter(@NonNull final String name, @NonNull final String source) {
         Assert.isTrue(isReady(), "workspace is not ready");

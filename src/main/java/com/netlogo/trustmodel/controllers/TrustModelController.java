@@ -22,10 +22,10 @@ public class TrustModelController {
 
     @PostMapping("/register-reporters")
     public ResponseEntity<?> registerReporters() {
-        Assert.isTrue(workspaceService.getCurrentWorkspace().isReady(), "workspace is not ready");
+        Assert.isTrue(workspaceService.isReady(), "workspace is not ready");
 
-        workspaceService.getCurrentWorkspace().clearRegisteredReporters();
-        workspaceService.getCurrentWorkspace().registerReporters(trustModelService.generateReporterSourceMap());
+        workspaceService.clearRegisteredReporters();
+        workspaceService.registerReporters(trustModelService.generateReporterSourceMap());
 
         return ResponseEntity.ok().build();
     }
