@@ -7,25 +7,61 @@
     <body>
         <th:block>
             <h1>Demo!</h1>
+            <button id="register-reports">Register Reports</button>
+            <button id="go">Go</button>
             <button id="start-stream">Start Stream</button>
             <button id="end-stream">End Stream</button>
 
-            <img id="demo-streaming-view"/>
+            <div>
+                Tick Count: <span id="demo-tick-count"></span>
+            </div>
+
+            <img id="demo-view" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="/>
+
+            <div id="demo-reports"></div>
+
+            <div id="demo-plots"></div>
         </th:block>
 
         <script>
-            var streamModelSource;
-            var demoDrawingImage = document.getElementById("demo-streaming-view");
+            var viewSource;
+            var reportsSource;
+            var plotsSource;
 
             document.getElementById("start-stream").addEventListener("click", function () {
-                streamModelSource = new EventSource("http://localhost:8080/workspace/stream-view");
-                streamModelSource.onmessage = function (event) {
-                    demoDrawingImage.src = event.data;
+                viewSource = new EventSource("http://localhost:8080/workspace/stream-view");
+                viewSource.onmessage = function (event) {
+                    document.getElementById("demo-view").src = JSON.parse(event.data).imgSrc;
+                };
+
+                reportsSource = new EventSource("http://localhost:8080/workspace/stream-reports");
+                reportsSource.onmessage = function (event) {
+                    document.getElementById("demo-reports").innerHTML = JSON.stringify(JSON.parse(event.data), undefined, 2);
+                };
+
+                plotsSource = new EventSource("http://localhost:8080/workspace/stream-plots");
+                plotsSource.onmessage = function (event) {
+                    document.getElementById("demo-plots").innerHTML = JSON.stringify(JSON.parse(event.data), undefined, 2);
                 };
             });
 
             document.getElementById("end-stream").addEventListener("click", function () {
-                streamModelSource.close();
+                viewSource.close();
+                reportsSource.close();
+                plotsSource.close();
+            });
+
+            document.getElementById("register-reports").addEventListener("click", function () {
+                fetch('http://localhost:8080/trust-model/register-reporters', {method: 'post'});
+            });
+
+            document.getElementById("go").addEventListener("click", function () {
+                fetch('http://localhost:8080/workspace/go', {method: 'post'})
+                    .then(function (response) {
+                        response.json().then(function (data) {
+                            document.getElementById("demo-tick-count").innerText = data;
+                        });
+                    });
             });
         </script>
     </body>
