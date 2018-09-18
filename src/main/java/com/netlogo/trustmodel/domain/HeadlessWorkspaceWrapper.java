@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.UtilityClass;
+import lombok.experimental.Wither;
 import lombok.val;
 import org.nlogo.api.Color;
 import org.nlogo.headless.HeadlessWorkspace;
@@ -71,18 +72,24 @@ public class HeadlessWorkspaceWrapper {
         Assert.hasText(source, "source");
 
         registeredReportMap.put(name, source);
+
+        updateCurrentReports();
     }
 
     public synchronized void registerReporters(@NonNull final Map<String, String> reportMap) {
         Assert.isTrue(isReady(), "workspace is not ready");
 
-        reportMap.forEach(this::registerReporter);
+        registeredReportMap.putAll(reportMap);
+
+        updateCurrentReports();
     }
 
     public synchronized void clearRegisteredReporters() {
         Assert.isTrue(isReady(), "workspace is not ready");
 
         registeredReportMap.clear();
+
+        updateCurrentReports();
     }
 
     public synchronized void dispose() throws InterruptedException {
@@ -117,6 +124,10 @@ public class HeadlessWorkspaceWrapper {
                 .collect(Collectors.toList());
     }
 
+    private synchronized void updateCurrentReports() {
+        this.currentWorld = currentWorld.withReportMap(generateCurrentReports());
+    }
+
     private synchronized void updateCurrentWorld() {
         this.currentWorld = new World(
                 (long) workspace.world().ticks(),
@@ -142,7 +153,10 @@ public class HeadlessWorkspaceWrapper {
     }
 
     @Value
+    @Wither
     public static class World {
+        public static final World EMPTY = new World(0, Collections.emptyMap(), View.EMPTY, Collections.emptyList());
+
         private long tickCount;
 
         @NonNull
@@ -158,6 +172,8 @@ public class HeadlessWorkspaceWrapper {
 
     @Value
     public static class View {
+        public static final View EMPTY = new View(Utils.EMPTY_IMAGE_STRING, 1, 1);
+
         @NonNull
         private String imgSrc;
 
@@ -271,6 +287,8 @@ public class HeadlessWorkspaceWrapper {
 
     @UtilityClass
     private static class Utils {
+        String EMPTY_IMAGE_STRING = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+
         String convertNetLogoColorToHexString(final double netLogoColor) {
             val color = Color.getColor(netLogoColor);
 
@@ -283,7 +301,7 @@ public class HeadlessWorkspaceWrapper {
 
         String encodeImageToBase64(@NonNull final BufferedImage image) {
             // Default to a 1x1 transparent GIF
-            String imageString = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+            String imageString = EMPTY_IMAGE_STRING;
 
             try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 ImageIO.write(image, "png", outputStream);

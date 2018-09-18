@@ -38,6 +38,8 @@ public class WorkspaceService {
         Assert.isTrue(isReady(), "workspace is not ready");
 
         workspace.setup();
+
+        publishWorkspaceGoEvent();
     }
 
     public long go() {
@@ -45,7 +47,7 @@ public class WorkspaceService {
 
         workspace.go();
 
-        applicationEventPublisher.publishEvent(new WorkspaceGoEvent(this, workspace.world()));
+        publishWorkspaceGoEvent();
 
         return workspace.world().getTickCount();
     }
@@ -80,22 +82,28 @@ public class WorkspaceService {
         return workspace.world();
     }
 
-    public void registerReporter(@NonNull final String name, @NonNull final String source) {
+    public synchronized void registerReporter(@NonNull final String name, @NonNull final String source) {
         Assert.isTrue(isReady(), "workspace is not ready");
 
         workspace.registerReporter(name, source);
+
+        publishWorkspaceGoEvent();
     }
 
-    public void registerReporters(@NonNull final Map<String, String> reportMap) {
+    public synchronized void registerReporters(@NonNull final Map<String, String> reportMap) {
         Assert.isTrue(isReady(), "workspace is not ready");
 
-        reportMap.forEach(workspace::registerReporter);
+        workspace.registerReporters(reportMap);
+
+        publishWorkspaceGoEvent();
     }
 
-    public void clearRegisteredReporters() {
+    public synchronized void clearRegisteredReporters() {
         Assert.isTrue(isReady(), "workspace is not ready");
 
         workspace.clearRegisteredReporters();
+
+        publishWorkspaceGoEvent();
     }
 
     public synchronized void dispose() throws InterruptedException {
@@ -115,6 +123,12 @@ public class WorkspaceService {
     @PostConstruct
     private void init() throws IOException {
         workspace = headlessWorkspaceWrapperFactory.create();
+
+        publishWorkspaceGoEvent();
+    }
+
+    private void publishWorkspaceGoEvent() {
+        applicationEventPublisher.publishEvent(new WorkspaceGoEvent(this, workspace.world()));
     }
 
     public static class WorkspaceGoEvent extends ApplicationEvent {
