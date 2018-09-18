@@ -7,6 +7,9 @@
     <body>
         <th:block>
             <h1>Demo!</h1>
+            <div> For Setup :
+                <button id="setup">Setup</button>
+            </div>
             <div> For Streaming : 
             <button id="register-reports">Register Reports</button>
             <button id="go">Go</button>
@@ -64,6 +67,10 @@
                             document.getElementById("demo-tick-count").innerText = data;
                         });
                     });
+            });
+
+            document.getElementById("setup").addEventListener("click", function () {
+                fetch('http://localhost:8080/trust-model/setup', {method: 'post'});
             });
         </script>
     </body>
