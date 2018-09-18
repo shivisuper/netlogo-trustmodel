@@ -6,6 +6,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,4 +30,16 @@ public class TrustModelController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/setup")
+    public ResponseEntity<?> setupWorkspace() {
+        Assert.isTrue(workspaceService.isReady(), "workspace is not ready");
+
+        workspaceService.clearRegisteredReporters();
+        workspaceService.registerReporters(trustModelService.generateReporterSourceMap());
+
+        workspaceService.setup();
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -7,20 +7,22 @@
     <body>
         <th:block>
             <h1>Demo!</h1>
+            <div> For Streaming : 
             <button id="register-reports">Register Reports</button>
             <button id="go">Go</button>
             <button id="start-stream">Start Stream</button>
             <button id="end-stream">End Stream</button>
-
+                
             <div>
                 Tick Count: <span id="demo-tick-count"></span>
             </div>
-
+                
             <img id="demo-view" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="/>
 
             <div id="demo-reports"></div>
 
             <div id="demo-plots"></div>
+            </div>
         </th:block>
 
         <script>
@@ -54,7 +56,7 @@
             document.getElementById("register-reports").addEventListener("click", function () {
                 fetch('http://localhost:8080/trust-model/register-reporters', {method: 'post'});
             });
-
+            
             document.getElementById("go").addEventListener("click", function () {
                 fetch('http://localhost:8080/workspace/go', {method: 'post'})
                     .then(function (response) {
